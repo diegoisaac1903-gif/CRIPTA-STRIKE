@@ -8,7 +8,7 @@ const gameHost = process.env.GAME_SERVER_HOST || "147.185.221.215";
 const gamePort = Number(process.env.GAME_SERVER_PORT) || 2832;
 
 app.get("/", (_request, response) => {
-  response.sendFile(path.join(__dirname, "Untitled-1.html"));
+  response.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
