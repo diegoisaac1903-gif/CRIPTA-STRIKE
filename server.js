@@ -32,7 +32,8 @@ app.get("/api/server-status", async (_request, response) => {
       numplayers: state.numplayers ?? 0,
       maxplayers: state.maxplayers ?? 0,
     });
-  } catch {
+  } catch (error) {
+    console.error("No se pudo consultar el servidor de Counter-Strike:", error);
     response.json({
       online: false,
       name: null,

@@ -237,6 +237,17 @@
       background: #df706a;
     }
 
+    .server-status[data-state="unavailable"]::before {
+      background: #d3a64a;
+    }
+
+    .server-status-help {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
     .server-details {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -493,6 +504,7 @@
             <div>
               <h2>CRIPTA-STRIKER LBPSJ</h2>
               <p>Counter-Strike 1.6 · <span class="server-status" id="server-status" data-state="checking">Consultando...</span></p>
+              <p class="server-status-help" id="server-status-help" role="status" hidden></p>
             </div>
           </div>
           <div class="server-details">
@@ -572,28 +584,53 @@
 
   <script>
     const serverStatus = document.getElementById("server-status");
+    const serverStatusHelp = document.getElementById("server-status-help");
     const serverMap = document.getElementById("server-map");
     const serverPlayerCount = document.getElementById("server-player-count");
+
+    function showUnavailableStatus(message, explanation) {
+      serverStatus.dataset.state = "unavailable";
+      serverStatus.textContent = message;
+      serverStatusHelp.textContent = explanation;
+      serverStatusHelp.hidden = false;
+      serverMap.textContent = "--";
+      serverPlayerCount.textContent = "--";
+    }
 
     async function updateServerStatus() {
       try {
         const response = await fetch("/api/server-status", { cache: "no-store" });
-        if (!response.ok) throw new Error("No se pudo consultar el servidor.");
+        if (response.status === 404) {
+          showUnavailableStatus(
+            "API NO DISPONIBLE",
+            "GitHub Pages solo publica archivos estáticos. Para mostrar el estado en vivo, aloja server.js en un servicio compatible con Node.js."
+          );
+          return;
+        }
+        if (!response.ok) throw new Error(`La consulta del estado falló (HTTP ${response.status}).`);
 
         const state = await response.json();
-        if (!state.online) throw new Error("El servidor no responde.");
+        if (!state.online) {
+          showUnavailableStatus(
+            "SIN RESPUESTA",
+            "El servicio web no recibe respuesta del servidor de juego. Revisa que esté activo y que la IP y el puerto de consulta UDP sean correctos."
+          );
+          return;
+        }
 
         serverStatus.dataset.state = "online";
         serverStatus.textContent = "EN LÍNEA";
+        serverStatusHelp.hidden = true;
+        serverStatusHelp.textContent = "";
         serverMap.textContent = state.map || "Desconocido";
         serverPlayerCount.textContent = state.maxplayers
           ? `${state.numplayers} / ${state.maxplayers}`
           : String(state.numplayers);
       } catch {
-        serverStatus.dataset.state = "offline";
-        serverStatus.textContent = "SIN RESPUESTA";
-        serverMap.textContent = "--";
-        serverPlayerCount.textContent = "--";
+        showUnavailableStatus(
+          "CONSULTA FALLIDA",
+          "No se pudo conectar con el servicio de estado. Vuelve a intentarlo más tarde."
+        );
       }
     }
 
