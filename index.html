@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#061018">
+  <title>Servidor Counter-Strike 1.6</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: dark;
+      --page: #050d13;
+      --surface: #19232b;
+      --surface-deep: #10191f;
+      --line: #35434d;
+      --text: #d3e2ec;
+      --muted: #91a6b5;
+      --accent: #9dc7e2;
+      --green: #27765e;
+      --green-light: #9ee0bf;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0 20px 48px;
+      background:
+        radial-gradient(ellipse at 50% 0, rgba(39, 67, 82, 0.22), transparent 58%),
+        var(--page);
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      font-size: 18px;
+    }
+
+    .site-shell {
+      width: min(1176px, 100%);
+      margin: 0 auto;
+      background: var(--surface);
+      border-right: 1px solid #26343d;
+      border-left: 1px solid #26343d;
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero {
+      position: relative;
+      display: flex;
+      min-height: 310px;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+      padding: 34px clamp(28px, 6vw, 78px);
+      background-color: #07131b;
+      background-image:
+        linear-gradient(90deg, rgba(5, 14, 21, 0.12) 0%, rgba(5, 14, 21, 0.18) 40%, rgba(7, 19, 27, 0.78) 78%, rgba(7, 19, 27, 0.9) 100%),
+        url("assets/cripta-fondo.jpg");
+      background-repeat: no-repeat;
+      background-position: center, center 44%;
+      background-size: 100% 100%, cover;
+      border-bottom: 1px solid #25333c;
+    }
+
+    .hero-character {
+      position: absolute;
+      z-index: 1;
+      bottom: 0;
+      left: clamp(12px, 4vw, 48px);
+      height: 108%;
+      max-width: 40%;
+      object-fit: contain;
+      object-position: center bottom;
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      width: min(54%, 540px);
+      text-align: right;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #83a9c1;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: inherit;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      margin-bottom: 8px;
+      line-height: 0;
+    }
+
+    .hero-logo {
+      display: block;
+      width: min(100%, 460px);
+      height: auto;
+      margin-left: auto;
+      filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+    }
+
+    .hero-tagline {
+      margin-bottom: 0;
+      color: #b7c8d3;
+      font-family: "Copperplate Gothic Bold", Copperplate, "Cinzel", Georgia, serif;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .separator {
+      height: 54px;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.46), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.4)),
+        repeating-linear-gradient(135deg, #151b1f 0 3px, #12181c 3px 6px);
+      border-bottom: 1px solid #35424a;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(285px, 0.9fr);
+      gap: 24px;
+      padding: 20px;
+    }
+
+    .main-column,
+    .side-column {
+      min-width: 0;
+    }
+
+    .section-heading {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .server-summary {
+      padding: 20px;
+      background: linear-gradient(120deg, #202c35, #172129 72%);
+      border: 1px solid #33424c;
+    }
+
+    .summary-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .game-mark {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+      place-items: center;
+      background: #101920;
+      border: 1px solid #50616d;
+      color: #e7f2f8;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .summary-top h2 {
+      overflow-wrap: anywhere;
+      margin: 0 0 3px;
+      color: #e1edf4;
+      font-size: 19px;
+    }
+
+    .summary-top > div:last-child {
+      min-width: 0;
+    }
+
+    .summary-top p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      overflow-wrap: anywhere;
+    }
+
+    .server-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .server-status::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #d3a64a;
+      content: "";
+    }
+
+    .server-status[data-state="online"]::before {
+      background: #74d6a5;
+    }
+
+    .server-status[data-state="offline"]::before {
+      background: #df706a;
+    }
+
+    .server-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 22px;
+      padding-top: 17px;
+    }
+
+    .detail-label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .detail-value {
+      display: block;
+      overflow-wrap: anywhere;
+      color: #dceaf2;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .section-rule {
+      height: 1px;
+      margin: 24px 0 18px;
+      background: var(--line);
+      border: 0;
+    }
+
+    .about-title,
+    .side-title {
+      margin: 0;
+      padding: 11px 14px;
+      background: #11191f;
+      border-bottom: 1px solid #303d46;
+      color: #a9cce2;
+      font-size: 19px;
+    }
+
+    .about-copy {
+      padding: 14px;
+      background: #141d23;
+      color: #c5d5df;
+      line-height: 1.45;
+    }
+
+    .about-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .side-column section + section {
+      margin-top: 20px;
+    }
+
+    .connect-panel {
+      background: #18232b;
+      border: 1px solid #2e3d47;
+    }
+
+    .connect-form {
+      padding: 16px;
+    }
+
+    .connection-fields {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .connection-field label {
+      display: block;
+      margin-bottom: 5px;
+      color: #a9bdca;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .connection-field input {
+      width: 100%;
+      min-width: 0;
+      padding: 9px 10px;
+      background: #0c151b;
+      border: 1px solid #40515d;
+      border-radius: 0;
+      color: #e4f0f7;
+      font: inherit;
+      font-size: 17px;
+    }
+
+    .connection-field input:focus-visible {
+      outline: 2px solid #83b3d2;
+      outline-offset: 2px;
+    }
+
+    .connect-button {
+      width: 100%;
+      min-height: 54px;
+      padding: 10px 14px;
+      background: linear-gradient(#326b8d, #274e68);
+      border: 1px solid #5685a0;
+      border-radius: 0;
+      color: #e0f2fc;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .connect-button:hover {
+      background: linear-gradient(#3c7b9f, #2d5a77);
+    }
+
+    .connect-button:focus-visible {
+      outline: 2px solid #c2e7fb;
+      outline-offset: 3px;
+    }
+
+    #connection-status {
+      min-height: 1.2em;
+      margin: 10px 0 0;
+      color: #b5c8d4;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .server-info {
+      background: #141d23;
+    }
+
+    .info-list {
+      margin: 0;
+      padding: 5px 14px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 9px 0;
+      border-bottom: 1px solid #2a3740;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-row dt {
+      color: var(--muted);
+    }
+
+    .info-row dd {
+      margin: 0;
+      color: #e0ebf2;
+      font-weight: 700;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 0 12px 28px;
+      }
+
+      .hero {
+        min-height: 250px;
+        justify-content: flex-end;
+        background-position: center, 44% center;
+        background-size: 100% 100%, cover;
+      }
+
+      .hero-character {
+        left: -8px;
+        height: 96%;
+        max-width: 42%;
+      }
+
+      .hero-copy {
+        width: 70%;
+        padding: 16px 4px;
+        text-align: right;
+        text-shadow: 0 2px 8px #000;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      body {
+        padding: 0 8px 20px;
+        font-size: 17px;
+      }
+
+      .hero {
+        min-height: 210px;
+      }
+
+      .hero-copy {
+        width: 72%;
+        padding: 12px 0;
+      }
+
+      .content-grid {
+        padding: 12px;
+      }
+
+      .server-summary {
+        padding: 14px;
+      }
+
+      .summary-top > div:last-child {
+        flex: 1;
+      }
+
+      .server-details {
+        gap: 12px;
+      }
+
+      .connection-fields {
+        grid-template-columns: minmax(0, 1fr) 82px;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="hero">
+      <img class="hero-character" src="assets/cripta-personaje.jpg" alt="" aria-hidden="true">
+      <div class="hero-copy">
+        <p class="eyebrow">Servidor multijugador</p>
+        <h1 class="hero-title">
+          <img class="hero-logo" src="https://cdn.cloudflare.steamstatic.com/steam/apps/10/logo.png" alt="Counter-Strike 1.6">
+        </h1>
+        <p class="hero-tagline">Cripta Strike</p>
+      </div>
+    </header>
+
+    <div class="separator" aria-hidden="true"></div>
+
+    <main class="content-grid">
+      <section class="main-column" aria-labelledby="server-heading">
+        <h2 class="section-heading" id="server-heading">Servidor Counter-Strike 1.6</h2>
+
+        <div class="server-summary">
+          <div class="summary-top">
+            <div class="game-mark" aria-hidden="true">CS</div>
+            <div>
+              <h2>CRIPTA-STRIKER LBPSJ</h2>
+              <p>Counter-Strike 1.6 · <span class="server-status" id="server-status" data-state="checking">Consultando...</span></p>
+            </div>
+          </div>
+          <div class="server-details">
+            <div>
+              <span class="detail-label">Dirección IP</span>
+              <strong class="detail-value">147.185.221.215</strong>
+            </div>
+            <div>
+              <span class="detail-label">Puerto</span>
+              <strong class="detail-value">2832</strong>
+            </div>
+            <div>
+              <span class="detail-label">Mapa</span>
+              <strong class="detail-value" id="server-map">--</strong>
+            </div>
+            <div>
+              <span class="detail-label">Jugadores</span>
+              <strong class="detail-value" id="server-player-count">--</strong>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-rule">
+
+        <section aria-labelledby="about-heading">
+          <h3 class="about-title" id="about-heading">COMUNIDAD CRIPTA STRIKE</h3>
+          <div class="about-copy">
+            <p>Reúne a tus compañeros, entra al servidor y vuelve a la acción en Counter-Strike 1.6.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <aside class="side-column" aria-label="Conexión e información del servidor">
+        <section class="connect-panel" aria-labelledby="connect-heading">
+          <h2 class="side-title" id="connect-heading">CONECTAR AL SERVIDOR</h2>
+          <form class="connect-form" id="connect-form">
+            <div class="connection-fields">
+              <div class="connection-field">
+                <label for="server-address">IP o dominio</label>
+                <input id="server-address" name="server" type="text" value="147.185.221.215" autocomplete="off" required>
+              </div>
+              <div class="connection-field">
+                <label for="server-port">Puerto</label>
+                <input id="server-port" name="port" type="number" min="1" max="65535" value="2832" inputmode="numeric" required>
+              </div>
+            </div>
+            <button class="connect-button" type="submit">CONECTAR</button>
+            <p id="connection-status" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="server-info" aria-labelledby="info-heading">
+          <h2 class="side-title" id="info-heading">INFORMACIÓN</h2>
+          <dl class="info-list">
+            <div class="info-row">
+              <dt>Juego</dt>
+              <dd>Counter-Strike 1.6</dd>
+            </div>
+            <div class="info-row">
+              <dt>Conexión</dt>
+              <dd>Steam</dd>
+            </div>
+            <div class="info-row">
+              <dt>Dirección</dt>
+              <dd>147.185.221.215:2832</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const serverStatus = document.getElementById("server-status");
+    const serverMap = document.getElementById("server-map");
+    const serverPlayerCount = document.getElementById("server-player-count");
+
+    async function updateServerStatus() {
+      try {
+        const response = await fetch("/api/server-status", { cache: "no-store" });
+        if (!response.ok) throw new Error("No se pudo consultar el servidor.");
+
+        const state = await response.json();
+        if (!state.online) throw new Error("El servidor no responde.");
+
+        serverStatus.dataset.state = "online";
+        serverStatus.textContent = "EN LÍNEA";
+        serverMap.textContent = state.map || "Desconocido";
+        serverPlayerCount.textContent = state.maxplayers
+          ? `${state.numplayers} / ${state.maxplayers}`
+          : String(state.numplayers);
+      } catch {
+        serverStatus.dataset.state = "offline";
+        serverStatus.textContent = "SIN RESPUESTA";
+        serverMap.textContent = "--";
+        serverPlayerCount.textContent = "--";
+      }
+    }
+
+    updateServerStatus();
+    window.setInterval(updateServerStatus, 15000);
+
+    const connectForm = document.getElementById("connect-form");
+    const serverAddress = document.getElementById("server-address");
+    const serverPort = document.getElementById("server-port");
+    const connectionStatus = document.getElementById("connection-status");
+
+    connectForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const address = serverAddress.value.trim();
+      const port = Number(serverPort.value);
+      const validHost = /^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)(?:\.(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?))*$/.test(address);
+
+      if (!validHost) {
+        serverAddress.setCustomValidity("Escribe una IP o un dominio válido, sin protocolo ni puerto.");
+        serverAddress.reportValidity();
+        return;
+      }
+
+      serverAddress.setCustomValidity("");
+      if (!Number.isInteger(port) || port < 1 || port > 65535) {
+        serverPort.setCustomValidity("El puerto debe estar entre 1 y 65535.");
+        serverPort.reportValidity();
+        return;
+      }
+
+      serverPort.setCustomValidity("");
+      connectionStatus.textContent = "Abriendo Counter-Strike 1.6 mediante Steam...";
+      window.location.href = `steam://connect/${address}:${port}`;
+    });
+
+    serverAddress.addEventListener("input", () => serverAddress.setCustomValidity(""));
+    serverPort.addEventListener("input", () => serverPort.setCustomValidity(""));
+  </script>
+</body>
+</html>
