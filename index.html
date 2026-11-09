@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#061018">
+  <meta name="theme-color" content="#150909">
   <title>Servidor Counter-Strike 1.6</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,15 +15,13 @@
 
     :root {
       color-scheme: dark;
-      --page: #050d13;
-      --surface: #19232b;
-      --surface-deep: #10191f;
-      --line: #35434d;
-      --text: #d3e2ec;
-      --muted: #91a6b5;
-      --accent: #9dc7e2;
-      --green: #27765e;
-      --green-light: #9ee0bf;
+      --page: #100808;
+      --surface: #271919;
+      --surface-deep: #1a1010;
+      --line: #523638;
+      --text: #eadede;
+      --muted: #bca3a3;
+      --accent: #e8aaaa;
     }
 
     body {
@@ -31,7 +29,7 @@
       margin: 0;
       padding: 0 20px 48px;
       background:
-        radial-gradient(ellipse at 50% 0, rgba(39, 67, 82, 0.22), transparent 58%),
+        radial-gradient(ellipse at 50% 0, rgba(105, 38, 42, 0.3), transparent 58%),
         var(--page);
       color: var(--text);
       font-family: "Courier New", Courier, monospace;
@@ -42,9 +40,27 @@
       width: min(1176px, 100%);
       margin: 0 auto;
       background: var(--surface);
-      border-right: 1px solid #26343d;
-      border-left: 1px solid #26343d;
+      border-right: 1px solid #432b2e;
+      border-left: 1px solid #432b2e;
       box-shadow: 0 22px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .site-footer {
+      padding: 18px 20px;
+      background: #1b1011;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .site-footer p {
+      margin: 0;
+    }
+
+    .site-footer strong {
+      color: var(--accent);
     }
 
     .hero {
@@ -55,14 +71,14 @@
       justify-content: flex-end;
       overflow: hidden;
       padding: 34px clamp(28px, 6vw, 78px);
-      background-color: #07131b;
+      background-color: #1a0b0d;
       background-image:
-        linear-gradient(90deg, rgba(5, 14, 21, 0.12) 0%, rgba(5, 14, 21, 0.18) 40%, rgba(7, 19, 27, 0.78) 78%, rgba(7, 19, 27, 0.9) 100%),
+        linear-gradient(90deg, rgba(20, 7, 9, 0.12) 0%, rgba(20, 7, 9, 0.18) 40%, rgba(26, 11, 13, 0.78) 78%, rgba(26, 11, 13, 0.9) 100%),
         url("assets/cripta-fondo.jpg");
       background-repeat: no-repeat;
       background-position: center, center 44%;
       background-size: 100% 100%, cover;
-      border-bottom: 1px solid #25333c;
+      border-bottom: 1px solid #462d30;
     }
 
     .hero-character {
@@ -86,7 +102,7 @@
 
     .eyebrow {
       margin: 0 0 8px;
-      color: #83a9c1;
+      color: #e6aaa8;
       font-size: 15px;
       font-weight: 700;
       text-transform: uppercase;
@@ -121,7 +137,7 @@
 
     .hero-tagline {
       margin-bottom: 0;
-      color: #b7c8d3;
+      color: #d8c6c6;
       font-family: "Copperplate Gothic Bold", Copperplate, "Cinzel", Georgia, serif;
       font-size: 24px;
       font-weight: 700;
@@ -131,8 +147,8 @@
       height: 54px;
       background:
         linear-gradient(180deg, rgba(0, 0, 0, 0.46), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.4)),
-        repeating-linear-gradient(135deg, #151b1f 0 3px, #12181c 3px 6px);
-      border-bottom: 1px solid #35424a;
+        repeating-linear-gradient(135deg, #211719 0 3px, #191213 3px 6px);
+      border-bottom: 1px solid #49373a;
     }
 
     .content-grid {
@@ -140,6 +156,9 @@
       grid-template-columns: minmax(0, 1.55fr) minmax(285px, 0.9fr);
       gap: 24px;
       padding: 20px;
+      background:
+        linear-gradient(rgba(18, 8, 10, 0.74), rgba(18, 8, 10, 0.74)),
+        url("assets/cripta-skulls.png") center / cover no-repeat;
     }
 
     .main-column,
@@ -157,8 +176,8 @@
 
     .server-summary {
       padding: 20px;
-      background: linear-gradient(120deg, #202c35, #172129 72%);
-      border: 1px solid #33424c;
+      background: linear-gradient(120deg, rgba(53, 32, 34, 0.94), rgba(37, 24, 26, 0.94) 72%);
+      border: 1px solid #573b3e;
     }
 
     .summary-top {
@@ -170,22 +189,17 @@
     }
 
     .game-mark {
-      display: grid;
+      display: block;
       width: 58px;
       height: 58px;
       flex: 0 0 58px;
-      place-items: center;
-      background: #101920;
-      border: 1px solid #50616d;
-      color: #e7f2f8;
-      font-size: 22px;
-      font-weight: 700;
+      object-fit: cover;
     }
 
     .summary-top h2 {
       overflow-wrap: anywhere;
       margin: 0 0 3px;
-      color: #e1edf4;
+      color: #eee2e2;
       font-size: 19px;
     }
 
@@ -242,7 +256,7 @@
     .detail-value {
       display: block;
       overflow-wrap: anywhere;
-      color: #dceaf2;
+      color: #e8dada;
       font-size: 20px;
       font-weight: 600;
     }
@@ -258,16 +272,16 @@
     .side-title {
       margin: 0;
       padding: 11px 14px;
-      background: #11191f;
-      border-bottom: 1px solid #303d46;
-      color: #a9cce2;
+      background: rgba(30, 17, 19, 0.96);
+      border-bottom: 1px solid #493336;
+      color: #e4a4a4;
       font-size: 19px;
     }
 
     .about-copy {
       padding: 14px;
-      background: #141d23;
-      color: #c5d5df;
+      background: rgba(38, 25, 27, 0.94);
+      color: #d9c8c8;
       line-height: 1.45;
     }
 
@@ -280,8 +294,8 @@
     }
 
     .connect-panel {
-      background: #18232b;
-      border: 1px solid #2e3d47;
+      background: rgba(40, 25, 28, 0.96);
+      border: 1px solid #4d3539;
     }
 
     .connect-form {
@@ -298,7 +312,7 @@
     .connection-field label {
       display: block;
       margin-bottom: 5px;
-      color: #a9bdca;
+      color: #c7adad;
       font-size: 15px;
       font-weight: 700;
     }
@@ -307,16 +321,16 @@
       width: 100%;
       min-width: 0;
       padding: 9px 10px;
-      background: #0c151b;
-      border: 1px solid #40515d;
+      background: #1a1011;
+      border: 1px solid #594044;
       border-radius: 0;
-      color: #e4f0f7;
+      color: #eee2e2;
       font: inherit;
       font-size: 17px;
     }
 
     .connection-field input:focus-visible {
-      outline: 2px solid #83b3d2;
+      outline: 2px solid #dc8b8b;
       outline-offset: 2px;
     }
 
@@ -324,10 +338,10 @@
       width: 100%;
       min-height: 54px;
       padding: 10px 14px;
-      background: linear-gradient(#326b8d, #274e68);
-      border: 1px solid #5685a0;
+      background: linear-gradient(#a94349, #762d35);
+      border: 1px solid #c46a70;
       border-radius: 0;
-      color: #e0f2fc;
+      color: #fff0ef;
       font-family: inherit;
       font-size: 18px;
       font-weight: 700;
@@ -335,24 +349,24 @@
     }
 
     .connect-button:hover {
-      background: linear-gradient(#3c7b9f, #2d5a77);
+      background: linear-gradient(#bd5259, #873640);
     }
 
     .connect-button:focus-visible {
-      outline: 2px solid #c2e7fb;
+      outline: 2px solid #f0b4b4;
       outline-offset: 3px;
     }
 
     #connection-status {
       min-height: 1.2em;
       margin: 10px 0 0;
-      color: #b5c8d4;
+      color: #d0bebe;
       font-size: 15px;
       line-height: 1.3;
     }
 
     .server-info {
-      background: #141d23;
+      background: rgba(38, 25, 27, 0.94);
     }
 
     .info-list {
@@ -365,7 +379,7 @@
       justify-content: space-between;
       gap: 14px;
       padding: 9px 0;
-      border-bottom: 1px solid #2a3740;
+      border-bottom: 1px solid #473437;
     }
 
     .info-row:last-child {
@@ -378,7 +392,7 @@
 
     .info-row dd {
       margin: 0;
-      color: #e0ebf2;
+      color: #e9dddd;
       font-weight: 700;
       text-align: right;
       overflow-wrap: anywhere;
@@ -475,7 +489,7 @@
 
         <div class="server-summary">
           <div class="summary-top">
-            <div class="game-mark" aria-hidden="true">CS</div>
+            <img class="game-mark" src="assets/banana.png" alt="Banana">
             <div>
               <h2>CRIPTA-STRIKER LBPSJ</h2>
               <p>Counter-Strike 1.6 · <span class="server-status" id="server-status" data-state="checking">Consultando...</span></p>
@@ -550,6 +564,10 @@
         </section>
       </aside>
     </main>
+    <footer class="site-footer">
+      <p>Creado por <strong>Diego Mendez</strong> y <strong>Sebastian Vargas</strong></p>
+      <p>Grupo de desarrollo <strong>SVDM Hub</strong></p>
+    </footer>
   </div>
 
   <script>
